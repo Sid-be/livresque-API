@@ -1,0 +1,23 @@
+{
+  "name": "livresque_back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sid Ahmed BENAISSA",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.2.3",
+    "path": "^0.12.7",
+    "scrape-it": "^6.0.1",
+    "sequelize": "^6.31.0"
+  }
+}

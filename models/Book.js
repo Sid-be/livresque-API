@@ -20,8 +20,7 @@ const Book = sequelize.define('book', {
   pages: Sequelize.INTEGER,
   language: Sequelize.STRING,
   
-  
-});
+  });
 
 const BookAuthor = sequelize.define('books_authors', {
     bookId: {
@@ -98,24 +97,16 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  role: {
+    type: DataTypes.ENUM("user", "admin"),
+    allowNull: false,
+    defaultValue: "user",
+  },
 });
 
 const UserBook = sequelize.define('userbooks', {
  
-  userId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: User, 
-      key: 'id'
-    }
-  },
-  bookId: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Book, 
-      key: 'id'
-    }
-  },
+ 
   favoris: {
     type: DataTypes.BOOLEAN,
     allowNull: true,
@@ -136,7 +127,7 @@ Book.belongsTo(Publisher);
 User.belongsToMany(Book, { through: UserBook});
 Book.belongsToMany(User, { through: UserBook});
 
- /* sequelize.sync({force: true})  */
+/*  sequelize.sync({force: true})   */
 
 // Exporter les modèles
 module.exports = {

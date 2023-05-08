@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt=(require('bcrypt'))
-const JWT_KEY='a7c84f57d0c459a57962bc26f6a69f22b4202efad3c4049ce0486eea626e4683c9f9037f77a98367c55309df5d9ec127b4275b33ab3d92e5742af57eecc45eeb'
+
 
 const authMiddle = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -9,10 +9,10 @@ const authMiddle = (req, res, next) => {
       return res.status(401).json({ message: 'Authorization header missing' });
     }
     const token = authHeader.split(' ')[1];
-    const decod = jwt.verify(token, JWT_KEY);
+    const decod = jwt.verify(token, process.env.JWT_KEY);
     console.log(decod);
     try {
-      const decodedToken = jwt.verify(token, JWT_KEY);
+      const decodedToken = jwt.verify(token, process.env.JWT_KEY);
       req.userId = decodedToken.id;
       next();
     } catch (error) {

@@ -101,12 +101,13 @@ exports.createBook= async (req, res) => {
   }
 };
 exports.giveBooks=async(req, res, next) => {
+  try {
   const token = req.headers.authorization.split(' ')[1];
   const decodedToken = jwt.verify(token, JWT_KEY);
   const userId = decodedToken.id;
 
 console.log(req.userId)
-try {
+
  
   const currentUser = await User.findOne({ where: { id: userId } });
   const books = await currentUser.getBooks({

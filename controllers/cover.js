@@ -1,8 +1,8 @@
 
 const path = require('path');
-const cheerio = require('cheerio');
 const axios =require('axios');
 const fs = require('fs');
+const cheerio= require('cheerio');
 
 exports.getCover=async (req, res) => {
     const imagesPath = path.join(__dirname, 'images');
@@ -59,13 +59,13 @@ exports.getCover=async (req, res) => {
         if (err.response) {
           console.log(err.response.status);
         }
-        const imageNoImage = "No-Image-Placeholder.svg";
-        const imageUrlNo = `${req.protocol}://${req.headers.host}/image/${imageSrc}`;
-  
+        /* const imageNoImage = "No-Image-Placeholder.svg";
+        const imageUrlNo = `${req.protocol}://${req.headers.host}/image/${imageNoImage}`;
+   */
         res
           .status(500)
           .send(`Une erreur pendant le téléchargement de l'image ${err.message}`)
-          .json(imageUrlNo);
+          
       }
     })();
   };

@@ -67,12 +67,10 @@ genreId: {
 },
 });
 
-
 const Publisher = sequelize.define('publisher', {
   name: Sequelize.STRING,
  
 });
-
 
 
 const User = sequelize.define('User', {

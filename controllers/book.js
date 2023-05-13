@@ -1,5 +1,8 @@
 const { sequelize, Author, Book, Genre, Publisher, User,BookAuthor,BookGenre, UserBook } = require('../models/Book');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+
+const JWT_KEY='a7c84f57d0c459a57962bc26f6a69f22b4202efad3c4049ce0486eea626e4683c9f9037f77a98367c55309df5d9ec127b4275b33ab3d92e5742af57eecc45eeb'
 
 exports.createBook= async (req, res) => {
   console.log(req.userId);
@@ -98,7 +101,11 @@ exports.createBook= async (req, res) => {
   }
 };
 exports.giveBooks=async(req, res, next) => {
-const userId = req.userId;
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, JWT_KEY);
+  const userId = decodedToken.id;
+
+console.log(req.userId)
 try {
  
   const currentUser = await User.findOne({ where: { id: userId } });
@@ -117,7 +124,9 @@ try {
 }
 }
 exports.getOneBook=async(req,res,next)=>{
-  const userId = req.userId;
+  const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, JWT_KEY);
+  const userId = decodedToken.id;
   const bookId=req.params.id;
   try{
     const oneBook= await Book.findOne({

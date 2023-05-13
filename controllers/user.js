@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require('jsonwebtoken');
 const bcrypt=(require('bcrypt'))
-
+const JWT_KEY='a7c84f57d0c459a57962bc26f6a69f22b4202efad3c4049ce0486eea626e4683c9f9037f77a98367c55309df5d9ec127b4275b33ab3d92e5742af57eecc45eeb'
 const {
   sequelize,
   User
@@ -9,43 +9,6 @@ const {
 const path = require('path');
 
 
-exports.registerUser= async (req, res) => {
-  try {
-    const { email,name, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ email, name,password: hashedPassword });
-    res.status(201).json({ user: { email: user.email, name: user.name } });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error creating user' });
-  }
-};
-exports.UserLogin= async (req, res) => {
-  
-  const { email, password } = req.body;
-
-  // Recherche de l'utilisateur dans la base de données
-  const user = await User.findOne({ where: { email } });
-
-  if (!user) {
-    // L'utilisateur n'existe pas
-    return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
-  }
-
-  // Vérification du mot de passe
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-
-  if (!isPasswordValid) {
-    // Le mot de passe est incorrect
-    return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
-  }
-
-  // Création d'un JWT contenant les informations de l'utilisateur
-  const token = jwt.sign({ id: user.id,name:user.name, email: user.email }, process.env.JWT_KEY, { expiresIn: '6h' });
-
-  // Envoi du token dans la réponse
-  res.json({ token});
-};
 exports.createUser=async (req, res) => {
   try {
     const { email,name, password } = req.body;
@@ -54,7 +17,7 @@ exports.createUser=async (req, res) => {
     res.status(201).json({ user });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error creating user' });
+    res.status(500).json({ error: 'une erreur est survenue lors de la creation de l\'utilisateur ' });
   }
 };
 
@@ -78,10 +41,10 @@ exports.UserLogin=async (req, res) => {
   }
 
   // Création d'un JWT contenant les informations de l'utilisateur
-  const token = jwt.sign({ id: user.id,name:user.name, email: user.email }, process.env.JWT_KEY, { expiresIn: '6h' });
+  const token = jwt.sign({ id: user.id,name:user.name, email: user.email }, JWT_KEY, { expiresIn: '6h' });
 
   // Envoi du token dans la réponse
-  res.json({ token});
+  res.json({token});
 };
 exports.updateUser=async (req, res, next) => {
   const userId = req.userId;
@@ -122,7 +85,7 @@ catch (err) {
   res
     .status(500)
     .send(
-      "Une erreur est survenue lors de la récupération du livre."
+      "Une erreur est survenue lors de la récupération de l'utilisateur"
     );
 }
 }

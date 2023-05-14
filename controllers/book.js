@@ -10,10 +10,10 @@ exports.createBook= async (req, res) => {
 
   let transaction;
   try {
-    // Ouvrir une transaction pour garantir l'atomicité des opérations d'insertion
+    
     transaction = await sequelize.transaction();
 
-    // Créer ou récupérer les auteurs correspondants
+  
     const authorIds = [];
     for (const authorName of req.body.authors) {
       const [author] = await Author.findOrCreate({

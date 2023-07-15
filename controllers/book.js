@@ -32,6 +32,7 @@ exports.createBook= async (req, res) => {
       genreIds.push(genre.id);
     }
     // Insérer le nouveau publisher
+    console.log(req.body.publisher)
     const [publisher] = await Publisher.findOrCreate({
       where: {
         name: req.body.publisher,
@@ -101,35 +102,41 @@ exports.createBook= async (req, res) => {
   }
 };
 exports.giveBooks=async(req, res, next) => {
+ 
   try {
-  const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token) {
+      // Le token est introuvable
+      // Gérez l'erreur en conséquence (par exemple, renvoyez un message d'erreur ou un code d'état approprié)
+      const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
+    
+      return res.status(401).json(books );
+    }
   const decodedToken = jwt.verify(token, JWT_KEY);
   const userId = decodedToken.id;
-
-console.log(req.userId)
-
- 
   const currentUser = await User.findOne({ where: { id: userId } });
   const books = await currentUser.getBooks({
     order: [["createdAt", "DESC"]],
   });
 
   res.json(books);
-} catch (err) {
-  console.error(err);
-  res
-    .status(500)
-    .send(
-      "Une erreur est survenue lors de la récupération des derniers livres."
-    );
+} catch(error){if (error.name === 'TokenExpiredError') {
+  const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
+  res.json(books);
+} else {
+  // Gérer d'autres erreurs liées au décodage du jeton JWT
+  res.status(401).json({ error: 'Token invalide' });
+} 
 }
 }
 exports.getOneBook=async(req,res,next)=>{
+ 
+  try{
   const token = req.headers.authorization.split(' ')[1];
   const decodedToken = jwt.verify(token, JWT_KEY);
   const userId = decodedToken.id;
   const bookId=req.params.id;
-  try{
+  
     const oneBook= await Book.findOne({
       where:{isbn:bookId},
       include: [
@@ -147,9 +154,9 @@ exports.getOneBook=async(req,res,next)=>{
       where: { id: book.id },
       through: { attributes: ['favoris'] }
     });
-    
+    console.log(userBook);
     const favoris = userBook[0].userbooks.favoris;
-   
+   console.log(favoris);
     const bookWithFavoris = { ...oneBook.toJSON(), favoris };
     res.json(bookWithFavoris);
   }

@@ -7,6 +7,6 @@ router.post("/register", UserCtrl.createUser);
 router.post("/login", UserCtrl.UserLogin);
 router.get("/", isAdmin('admin'),UserCtrl.getAllUsers);
 router.put("/:id",authenticate, UserCtrl.updateUser);
-router.delete("/:id",isAdmin, UserCtrl.deleteUser);
+router.delete("/:id",isAdmin('admin'), UserCtrl.deleteUser);
 
 module.exports = router;

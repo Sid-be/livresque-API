@@ -101,17 +101,61 @@ exports.createBook= async (req, res) => {
       .send("Une erreur est survenue lors de l'insertion du livre.");
   }
 };
-exports.giveBooks=async(req, res, next) => {
+exports.getBooksByGenre=async(req, res, next) => {
+  const authorizationHeader = req.headers.authorization;
+  if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")){
  
-  try {
-    const token = req.headers.authorization.split(' ')[1];
-    if (!token) {
-      // Le token est introuvable
-      // Gérez l'erreur en conséquence (par exemple, renvoyez un message d'erreur ou un code d'état approprié)
-      const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
     
+   
+     
+      const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
+    console.log(books)
       return res.status(401).json(books );
     }
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+  const decodedToken = jwt.verify(token, JWT_KEY);
+  const userId = decodedToken.id;
+  const genre=req.params.genre
+  console.log(req.params.genre)
+  const currentUser = await User.findOne({ where: { id: userId } });
+  const books = await currentUser.getBooks({
+    include: [
+      { model: Genre, as: "genres", attributes:["name"] }
+     
+      
+    ],
+    where: {
+      "$genres.name$": genre // Utiliser le genre dans la condition de recherche
+    }
+ 
+  });
+
+  res.json(books);
+} catch(error){
+  console.log(error)
+  if (error.name === 'TokenExpiredError') {
+  const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
+  res.json(books);
+} else {
+
+  console.log('here')
+  res.status(401).json({ error: 'Token invalide' });
+} 
+}
+}
+exports.giveBooks=async(req, res, next) => {
+  const authorizationHeader = req.headers.authorization;
+if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")){
+  
+ 
+  
+    const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
+  
+    return res.status(200).json(books );
+  }
+  try {
+  const token = req.headers.authorization.split(' ')[1];
   const decodedToken = jwt.verify(token, JWT_KEY);
   const userId = decodedToken.id;
   const currentUser = await User.findOne({ where: { id: userId } });

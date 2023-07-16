@@ -116,14 +116,14 @@ const UserBook = sequelize.define('userbooks', {
 Book.belongsToMany(Author, { through: BookAuthor });
 Author.belongsToMany(Book, { through: BookAuthor });
 
-Book.belongsToMany(Genre, { through: BookGenre });
-Genre.belongsToMany(Book, { through: BookGenre });
+Book.belongsToMany(Genre, { through: BookGenre, as: 'genres' });
+Genre.belongsToMany(Book, { through: BookGenre, as: 'books' });
 
 Publisher.hasMany(Book);
 Book.belongsTo(Publisher);
 
-User.belongsToMany(Book, { through: UserBook});
-Book.belongsToMany(User, { through: UserBook});
+User.belongsToMany(Book, { through: UserBook, as: "books" });
+Book.belongsToMany(User, { through: UserBook, as: "users" });
 
 /*  sequelize.sync({force: true})   */
 

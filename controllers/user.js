@@ -41,7 +41,7 @@ exports.UserLogin=async (req, res) => {
   }
 
   // Création d'un JWT contenant les informations de l'utilisateur
-  const token = jwt.sign({ id: user.id,name:user.name, email: user.email }, JWT_KEY, { expiresIn: '2m' });
+  const token = jwt.sign({ id: user.id,name:user.name, email: user.email }, JWT_KEY, { expiresIn: '10m' });
 
   // Envoi du token dans la réponse
   res.json({token});

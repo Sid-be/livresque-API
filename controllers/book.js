@@ -104,12 +104,20 @@ exports.createBook= async (req, res) => {
 exports.getBooksByGenre=async(req, res, next) => {
   const authorizationHeader = req.headers.authorization;
   if (!authorizationHeader || !authorizationHeader.startsWith("Bearer ")){
- 
     
+    const genre=req.params.genre
    
      
-      const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
-    console.log(books)
+      const books = await Book.findAll({ order: [["createdAt", "DESC"]], 
+      include: [
+        { model: Genre, as: "genres", attributes:["name"] }
+       
+        
+      ],
+      where: {
+        "$genres.name$": genre // Utiliser le genre dans la condition de recherche
+      } });
+
       return res.status(401).json(books );
     }
   try {
@@ -135,11 +143,22 @@ exports.getBooksByGenre=async(req, res, next) => {
 } catch(error){
   console.log(error)
   if (error.name === 'TokenExpiredError') {
-  const books = await Book.findAll({ order: [["createdAt", "DESC"]] });
+    const genre=req.params.genre
+   
+     
+    const books = await Book.findAll({ order: [["createdAt", "DESC"]], 
+    include: [
+      { model: Genre, as: "genres", attributes:["name"] }
+     
+      
+    ],
+    where: {
+      "$genres.name$": genre // Utiliser le genre dans la condition de recherche
+    } });
   res.json(books);
 } else {
 
-  console.log('here')
+  
   res.status(401).json({ error: 'Token invalide' });
 } 
 }
